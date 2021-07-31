@@ -91,25 +91,28 @@ namespace JsonDiffPatchDotNet.Formatters.JsonPatch
 
 		private IList<Operation> ReorderOps(IList<Operation> result)
 		{
-			var removeOpsOtherOps = PartitionRemoveOps(result);
-			var removeOps = removeOpsOtherOps[0];
-			var otherOps = removeOpsOtherOps[1];
-			Array.Sort(removeOps, new RemoveOperationComparer());
-			return removeOps.Concat(otherOps).ToList();
+			var array = result.ToArray();
+			Array.Sort(array, new OperationComparer());
+			return array;
+			//var removeOpsOtherOps = PartitionRemoveOps(result);
+			//var removeOps = removeOpsOtherOps[0];
+			//var otherOps = removeOpsOtherOps[1];
+			//Array.Sort(removeOps, new RemoveOperationComparer());
+			//return removeOps.Concat(otherOps).ToList();
 		}
 
-		private IList<Operation[]> PartitionRemoveOps(IList<Operation> result)
-		{
-			var left = new List<Operation>();
-			var right = new List<Operation>();
+		//private IList<Operation[]> PartitionRemoveOps(IList<Operation> result)
+		//{
+		//	var left = new List<Operation>();
+		//	var right = new List<Operation>();
 
-			foreach (var op in result)
-				(op.Op.Equals("remove", StringComparison.Ordinal) ? left : right).Add(op);
+		//	foreach (var op in result)
+		//		(op.Op.Equals("remove", StringComparison.Ordinal) ? left : right).Add(op);
 
-			return new List<Operation[]> {left.ToArray(), right.ToArray()};
-		}
+		//	return new List<Operation[]> {left.ToArray(), right.ToArray()};
+		//}
 
-		private class RemoveOperationComparer : IComparer<Operation>
+		private class OperationComparer : IComparer<Operation>
 		{
 			public int Compare(Operation a, Operation b)
 			{
@@ -119,9 +122,26 @@ namespace JsonDiffPatchDotNet.Formatters.JsonPatch
 				var splitA = a.Path.Split('/');
 				var splitB = b.Path.Split('/');
 
-				return splitA.Length != splitB.Length
-					? splitA.Length - splitB.Length
-					: CompareByIndexDesc(splitA.Last(), splitB.Last());
+				if(splitA.Length != splitB.Length)
+				{
+					return splitA.Length - splitB.Length;
+				}
+				else
+				{
+					if (a.Op.Equals("remove")) {
+						if(a.Op.Equals(b.Op))
+							return CompareByIndexDesc(splitA.Last(), splitB.Last());
+						return -1;
+					}
+					if (a.Op.Equals(b.Op))
+						return CompareByIndexDesc(splitA.Last(), splitB.Last()) * -1;
+					if (b.Op.Equals("remove"))
+						return 1;
+					if (a.Op.Equals("replace"))
+						return -1;
+					return 1;
+				}
+				//return splitA.Length != splitB.Length ? splitA.Length - splitB.Length : CompareByIndexDesc(splitA.Last(), splitB.Last());
 			}
 
 			private static int CompareByIndexDesc(string indexA, string indexB)
