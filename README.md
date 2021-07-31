@@ -1,3 +1,12 @@
+Modified it to support Unity 2020.1.4f1 and have built-in patching to apply operations to an existing object.
+Patching code taken from:
+
+* [Tavis.JsonPatch](https://github.com/tavis-software/Tavis.JsonPatch)
+* [Tavis.JsonPointer](https://github.com/tavis-software/Tavis.JsonPointer)
+* [JsonDiffPatch](https://github.com/mcintyre321/JsonDiffPatch)
+
+Forked from: https://github.com/wbish/jsondiffpatch.net
+
 # jsondiffpatch.net
 <!--- badges -->
 [![Build status](https://ci.appveyor.com/api/projects/status/aavhn0lwas0j29gy?svg=true)](https://ci.appveyor.com/project/wbish/jsondiffpatch-net)
