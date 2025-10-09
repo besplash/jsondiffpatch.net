@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
 namespace Tavis
 {
@@ -47,8 +48,8 @@ namespace Tavis
                 var pointer = sample;
                 foreach (var token in _Tokens)
                 {
-					//if (!pointer.HasValues)
-					//	return pointer;
+                    //if (!pointer.HasValues)
+                    //	return pointer;
                     if (pointer is JArray)
                     {
                         pointer = pointer[Convert.ToInt32(token)];
@@ -65,9 +66,10 @@ namespace Tavis
                 }
                 return pointer;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw  new ArgumentException("Failed to dereference pointer",ex);
+                Debug.LogError("Tried to delete a non-existent token: " + ToString());
+                return ""; // return empty token
             }
         }
 

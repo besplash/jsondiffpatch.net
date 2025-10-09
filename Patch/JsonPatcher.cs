@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
 namespace JsonDiffPatch
 {
@@ -75,6 +76,9 @@ namespace JsonDiffPatch
         protected override void Remove(RemoveOperation operation, JToken target)
         {
             var token = operation.Path.Find(target);
+            if (token != null && string.IsNullOrEmpty(token.ToString()))
+                return;
+                
             if (token.Parent is JProperty)
             {
                 token.Parent.Remove();
